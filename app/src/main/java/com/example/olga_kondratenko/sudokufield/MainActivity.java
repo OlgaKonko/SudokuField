@@ -9,13 +9,13 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 
 public class MainActivity extends Activity {
-    public ImageView[][] buttons;
+    public TableButton[][] buttons;
     private TableLayout tableLayout;
     private int FIELD_SIZE = 9;
     private int LINES_SIZE = 4;
     private int LINE_SIZE = 150;
-    private int lineWidth;
-    private int width;
+    private int lineSize;
+    private int size;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,14 +23,14 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         tableLayout = findViewById(R.id.sudokuField);
-        buttons = new ImageView[FIELD_SIZE][FIELD_SIZE];
+        buttons = new TableButton[FIELD_SIZE][FIELD_SIZE];
         drawField();
     }
 
     private void drawField() {
         int tableWidth = getTableSize() -(tableLayout.getPaddingLeft()+tableLayout.getPaddingRight());
-        lineWidth = tableWidth/LINE_SIZE;
-        width = ((tableWidth -(lineWidth*LINES_SIZE))/(FIELD_SIZE));
+        lineSize = tableWidth/LINE_SIZE;
+        size = ((tableWidth -(lineSize *LINES_SIZE))/(FIELD_SIZE));
         TableRow row;
         for (int x = 0; x < FIELD_SIZE; x++) {
             if (x%3 == 0){
@@ -40,7 +40,7 @@ public class MainActivity extends Activity {
             for (int y = 0; y < FIELD_SIZE; y++) {
                 createButton(x, y, row);
             }
-            createLine(row, lineWidth, width);
+            createLine(row, lineSize, size);
             tableLayout.addView(row, new TableLayout.LayoutParams(TableLayout.LayoutParams.WRAP_CONTENT,
                     TableLayout.LayoutParams.WRAP_CONTENT));
         }
@@ -49,19 +49,15 @@ public class MainActivity extends Activity {
 
     private void createButton(int x, int y, TableRow row) {
         if (y%3 == 0){
-           createLine(row, lineWidth, width);
+           createLine(row, lineSize, size);
         }
-        ImageView button = new ImageView(this);
+        TableButton button = new TableButton(this);
         buttons[x][y] = button;
         button.setImageResource(R.drawable.shape);
         button.setOnClickListener(new MoveListener(x, y));
         row.addView(button, new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,
                 TableRow.LayoutParams.WRAP_CONTENT));
-
-        button.getLayoutParams().width = width;
-        button.getLayoutParams().height = width;
-
-        button.setScaleType(ImageView.ScaleType.FIT_XY);
+        button.fillSell(size);
     }
     private void createLine(TableRow row, int width, int height){
        ImageView button = new ImageView(this);
@@ -78,33 +74,15 @@ public class MainActivity extends Activity {
         TableRow row = new TableRow(this);
         for (int y = 0; y < FIELD_SIZE; y++) {
             if (y%3 == 0){
-                createLine(row, lineWidth, lineWidth);
+                createLine(row, lineSize, lineSize);
             }
-            createLine(row, width, lineWidth);
+            createLine(row, size, lineSize);
         }
-        createLine(row, lineWidth, lineWidth);
+        createLine(row, lineSize, lineSize);
         tableLayout.addView(row, new TableLayout.LayoutParams(TableLayout.LayoutParams.WRAP_CONTENT,
                 TableLayout.LayoutParams.WRAP_CONTENT));
     }
 
-  /*  private void setVerticalLine(int width, TableRow row) {
-        ImageView button = new ImageView(this);
-        button.setImageResource(R.drawable.color_shape);
-        row.addView(button, new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT,
-                TableRow.LayoutParams.MATCH_PARENT));
-        button.getLayoutParams().width = getTableSize();
-        button.getLayoutParams().height = LINE_SIZE;
-        //button.setScaleType(ImageView.ScaleType.FIT_XY);
-    }
-
-    private void setHorizontalLine(TableRow row) {
-        ImageView button = new ImageView(this);
-        button.setImageResource(R.drawable.color_shape);
-        row.addView(button, new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,
-                TableRow.LayoutParams.WRAP_CONTENT));
-        button.getLayoutParams().height = LINE_SIZE;
-        button.setScaleType(ImageView.ScaleType.FIT_XY);
-    }*/
 
     private int getTableSize() {
         Point size = new Point();
